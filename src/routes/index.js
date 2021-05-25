@@ -29,7 +29,7 @@ router.get('/:placa', async (req, res) => {
     }
 });
 
-router.post('/:placa', async (req, res) => {
+router.post('/', async (req, res) => {
     const { placa } = req.body;
     try {
         await pool.query('INSERT INTO registro (placa) VALUES (?)', placa);
