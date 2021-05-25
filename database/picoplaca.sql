@@ -8,19 +8,19 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema picoplaca
+-- Schema kylcth9tthkbezgd
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema picoplaca
+-- Schema kylcth9tthkbezgd
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `picoplaca` DEFAULT CHARACTER SET utf8 ;
-USE `picoplaca` ;
+CREATE SCHEMA IF NOT EXISTS `kylcth9tthkbezgd` DEFAULT CHARACTER SET utf8 ;
+USE `kylcth9tthkbezgd` ;
 
 -- -----------------------------------------------------
--- Table `picoplaca`.`registro`
+-- Table `kylcth9tthkbezgd`.`registro`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `picoplaca`.`registro` (
+CREATE TABLE IF NOT EXISTS `kylcth9tthkbezgd`.`registro` (
   `idregistro` INT NOT NULL,
   `placa` VARCHAR(10) NOT NULL,
   `fecha` TIMESTAMP NOT NULL,
