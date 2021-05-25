@@ -1,0 +1,69 @@
+<div class="container content-area">
+    <div class="row">
+        <div class="panel">
+            {{#if carrera}}
+            <div class="banner text-center">
+                <div class="container">
+                    <h1 class="logo-font">Carreras</h1>
+                </div>
+            </div>
+            {{else}}
+            <div class="banner text-center">
+                <div class="container">
+                    <h1 class="logo-font">Curso</h1>
+                </div>
+            </div>
+            {{/if}}
+            <div class="container">
+                <div class="row">
+                    {{#each carrera}}
+                    <a href="/clase/viewcarrera/{{idCarrera}}">
+                        <div class="media-object-default">
+                            <div class="media">
+                                <div class="media-left">
+
+                                    <img class="media-object img-circle" src="/images/ley.png" alt={{NombreCurso}}
+                                        style="width: 150px; height: 150px;">
+
+                                </div>
+                                <div class="media-body">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4 class="media-heading">{{NombreCurso}}</h4>
+
+                                        </div>
+                                        <div class="card-body">
+                                            {{DescripcionCurso}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {{/each}}
+                    {{#each curso}}
+                    <div class="card-body  mb-3 mx-auto">
+                        <a href="/clase/viewclase/{{Modulo_idModulo}}">
+                            <div class="media-object-default">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <img class="media-object img-circle" src="/images/titulo.png" alt={{NombreSubCurso}}
+                                            style="width: 80px; height: 80px;">
+                                    </div>
+                                    <div class="media-body">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h4 class="media-heading">{{NombreSubCurso}}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
