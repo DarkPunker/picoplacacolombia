@@ -14,8 +14,8 @@ function getDateTime() {
     return date;
 }
 
-router.get('/', async (req, res) => {
-    const { placa } = req.body;
+router.get('/:placa', async (req, res) => {
+    const { placa } = req.params;
     try {
         const consulta = await pool.query('SELECT * FROM registro WHERE placa = ? AND fecha >= ?', [placa, getDateTime() ]);
         if (consulta[0] != null) {
@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/:placa', async (req, res) => {
     const { placa } = req.body;
     try {
         await pool.query('INSERT INTO registro (placa) VALUES (?)', placa);
