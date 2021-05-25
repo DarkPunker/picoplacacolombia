@@ -23,7 +23,7 @@ USE `kylcth9tthkbezgd` ;
 CREATE TABLE IF NOT EXISTS `kylcth9tthkbezgd`.`registro` (
   `idregistro` INT NOT NULL AUTO_INCREMENT,
   `placa` VARCHAR(10) NOT NULL,
-  `fecha` TIMESTAMP NOT NULL,
+  `fecha` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idregistro`))
 ENGINE = InnoDB;
 
