@@ -14,6 +14,7 @@ router.post('/signup', /* isNotLoggedIn, */ passport.authenticate('local.signup'
 
 router.post('/signin', /* isNotLoggedIn, */ async (req, res, next) => {
     const { nombreUsuario, contrasena } = req.body;
+    console.log(nombreUsuario," ", contrasena);
     try {
         const rows = await pool.query('SELECT * FROM usuario WHERE nombreUsuario = ?', nombreUsuario);
         if (rows[0] != null) {
