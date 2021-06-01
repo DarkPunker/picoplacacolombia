@@ -14,15 +14,15 @@ passport.use('local.signin', new LocalStrategy({
         const valiPassword = await helpers.matchPassword(contrasena, rows[0].contrasena);
         if (valiPassword) {
             if (rows[0].estado != 0) {
-                done(null, rows[0], req.flash('success', 'Bienvenido ' + rows[0].nombreUsuario));
+                
             } else {
-                done(null, false, req.flash('message', 'Usuario inactivo'));
+                
             }
         } else {
-            done(null, false, req.flash('message', 'Contraseña invalida'));
+            
         }
     } else {
-        done(null, false, req.flash('message', 'Usuario invalido'));
+        
     }
 }));
 
