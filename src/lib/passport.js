@@ -4,17 +4,17 @@ const pool = require('../database');
 const helpers = require('../lib/helpers');
 
 passport.use('local.signin', new LocalStrategy({
-    usernameField: 'idusuario',
+    usernameField: 'nombreUsuario',
     passwordField: 'contrasena',
     passReqToCallback: true
-}, async (req, idusuario, contrasena, done) => {
-    const rows = await pool.query('SELECT * FROM usuario WHERE nombreUsuario = ?', idusuario);
-    if (rows[0].length > 0) {
-        const user = rows[0][0];
-        const valiPassword = await helpers.matchPassword(contrasena, user.Contrasena);
+}, async (req, nombreUsuario, contrasena, done) => {
+    const rows = await pool.query('SELECT * FROM usuario WHERE nombreUsuario = ?', nombreUsuario);
+    console.log(rows[0]);
+    if (rows[0] != null) {
+        const valiPassword = await helpers.matchPassword(contrasena, rows[0].contrasena);
         if (valiPassword) {
-            if (user.estado != 0) {
-                done(null, user, req.flash('success', 'Bienvenido ' + user.idUsuario));
+            if (rows[0].estado != 0) {
+                done(null, rows[0], req.flash('success', 'Bienvenido ' + rows[0].nombreUsuario));
             } else {
                 done(null, false, req.flash('message', 'Usuario inactivo'));
             }
@@ -27,31 +27,31 @@ passport.use('local.signin', new LocalStrategy({
 }));
 
 passport.use('local.signup', new LocalStrategy({
-    usernameField: 'idUsuario',
+    usernameField: 'nombreUsuario',
     passwordField: 'contrasena',
     passReqToCallback: true
-}, async (req, idUsuario, contrasena, done) => {
+}, async (req, nombreUsuario, contrasena, done) => {
     const { nombreEstacion } = req.body;
     const newUser = {
-        idUsuario,
+        nombreUsuario,
         contrasena,
         nombreEstacion
     };
-    const rows = await pool.query('SELECT * FROM usuario WHERE nombreUsuario = ?', [idUsuario]);
-    if (rows[0].length > 0) {
+    const rows = await pool.query('SELECT * FROM usuario WHERE nombreUsuario = ?;', [nombreUsuario]);
+    if (rows[0] !=null) {
         done(null, false, req.flash('message', 'Usuario ya esta en uso'));
     } else {
         newUser.contrasena = await helpers.encyptPassword(contrasena);
-        await pool.query('INSERT INTO usuario (nombreUsuario,contrasena,nombreEstacion) VALUES (?,?,?)', [newUser.idUsuario, newUser.contrasena, newPerson.nombreEstacion]);
+        await pool.query('INSERT INTO usuario (nombreUsuario, contrasena, nombreEstacion) VALUES (?,?,?);', [newUser.nombreUsuario, newUser.contrasena, newUser.nombreEstacion]);
         return done(null, newUser);
     }
 }));
 
 passport.serializeUser((user, done) => {
-    done(null, user.idUsuario)
+    done(null, user.nombreUsuario)
 });
 
-passport.deserializeUser(async (idUsuario, done) => {
-    const rows = await pool.query('SELECT * FROM usuario WHERE nombreUsuario = ?', [idUsuario]);
-    done(null, rows[0][0]);
+passport.deserializeUser(async (nombreUsuario, done) => {
+    const rows = await pool.query('SELECT * FROM usuario WHERE nombreUsuario = ?', [nombreUsuario]);
+    done(null, rows);
 });

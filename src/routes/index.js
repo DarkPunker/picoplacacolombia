@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../database');
+const { isLoggedIn } = require('../lib/auth');
 
 function getDateTime() {
 
@@ -14,13 +15,17 @@ function getDateTime() {
     return date;
 }
 
-router.get('/:placa', async (req, res) => {
+/* router.get('/', isLoggedIn, async (req, res) => {
+    res.sendStatus(200);
+}); */
+
+router.get('/:placa', /* isLoggedIn, */ async (req, res) => {
     const { placa } = req.params;
     try {
         const consulta = await pool.query('SELECT * FROM registro WHERE placa = ? AND fecha >= ?', [placa, getDateTime() ]);
-        //console.log(consulta);
+        console.log(consulta);
         if (consulta[0] != null) {
-            res.sendStatus(200)
+            res.sendStatus(200);
         } else {
             res.sendStatus(404);
         }
@@ -29,7 +34,7 @@ router.get('/:placa', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', /* isLoggedIn, */ async (req, res) => {
     const { placa } = req.body;
     try {
         const consul = await pool.query('INSERT INTO registro (placa) VALUES (?)', placa);

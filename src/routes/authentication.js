@@ -5,15 +5,15 @@ const pool = require('../database');
 
 const { isLoggedIn, isNotLoggedIn } = require('../lib/auth');
 
-router.post('/signup', isNotLoggedIn, passport.authenticate('local.signup', {
-    successRedirect: '/profile/profile',
+router.post('/signup', /* isNotLoggedIn, */ passport.authenticate('local.signup', {
+    successRedirect: '/',
     failureRedirect: '/signup',
     failureFlash: true
 }));
 
-router.post('/signin', isNotLoggedIn, (req, res, next) => {
+router.post('/signin', /* isNotLoggedIn, */ (req, res, next) => {
     passport.authenticate('local.signin', {
-        successRedirect: '/profile/profile',
+        successRedirect: '/',
         failureRedirect: '/signin',
         failureFlash: true
     })(req, res, next);
