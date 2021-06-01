@@ -8,12 +8,12 @@ passport.use('local.signin', new LocalStrategy({
     passwordField: 'contrasena',
     passReqToCallback: true
 }, async (req, idusuario, contrasena, done) => {
-    const rows = await pool.query('CALL seeUsuarioForId (?)', idusuario);
+    const rows = await pool.query('SELECT * FROM usuario WHERE nombreUsuario = ?', idusuario);
     if (rows[0].length > 0) {
         const user = rows[0][0];
         const valiPassword = await helpers.matchPassword(contrasena, user.Contrasena);
         if (valiPassword) {
-            if (user.EstadoUsuario != 0) {
+            if (user.estado != 0) {
                 done(null, user, req.flash('success', 'Bienvenido ' + user.idUsuario));
             } else {
                 done(null, false, req.flash('message', 'Usuario inactivo'));
@@ -31,36 +31,18 @@ passport.use('local.signup', new LocalStrategy({
     passwordField: 'contrasena',
     passReqToCallback: true
 }, async (req, idUsuario, contrasena, done) => {
-    const { idpersona, nombre1, apellido1, fechanacimiento, correo, sexo } = req.body;
-    const newPerson = {
-        idpersona,
-        nombre1,
-        apellido1,
-        fechanacimiento,
-        sexo
-    };
+    const { nombreEstacion } = req.body;
     const newUser = {
         idUsuario,
         contrasena,
-        correo
+        nombreEstacion
     };
-    const rows = await pool.query('CALL seeUsuarioForId (?)', [idUsuario]);
-    const person = await pool.query('CALL seePersonaForId (?)', [idpersona]);
-    if (idpersona.length == 0) {
-        done(null, false, req.flash('message', 'Numero de identificacion es un campo obligatorio'));
-    } else if (nombre1.length == 0) {
-        done(null, false, req.flash('message', 'Primer Nombre es un campo obligatorio'));
-    } else if (apellido1.length == 0) {
-        done(null, false, req.flash('message', 'Primer apellido es un campo obligatorio'));
-    } else if (fechanacimiento.length == 0) {
-        done(null, false, req.flash('message', 'Fecha de nacimiento es un campo obligatorio'));
-    } else if (rows[0].length > 0) {
+    const rows = await pool.query('SELECT * FROM usuario WHERE nombreUsuario = ?', [idUsuario]);
+    if (rows[0].length > 0) {
         done(null, false, req.flash('message', 'Usuario ya esta en uso'));
-    } else if (person[0].length > 0) {
-        done(null, false, req.flash('message', 'Numero de identificacion ya esta en uso'));
     } else {
         newUser.contrasena = await helpers.encyptPassword(contrasena);
-        await pool.query('CALL addPersonaUsuario (?,?,?,?,?,?,?,?)', [newUser.idUsuario, newUser.correo, newUser.contrasena, newPerson.idpersona, newPerson.nombre1, newPerson.apellido1, newPerson.fechanacimiento, newPerson.sexo]);
+        await pool.query('INSERT INTO usuario (nombreUsuario,contrasena,nombreEstacion) VALUES (?,?,?)', [newUser.idUsuario, newUser.contrasena, newPerson.nombreEstacion]);
         return done(null, newUser);
     }
 }));
@@ -70,6 +52,6 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (idUsuario, done) => {
-    const rows = await pool.query('CALL seeUsuarioForId (?)', [idUsuario]);
+    const rows = await pool.query('SELECT * FROM usuario WHERE nombreUsuario = ?', [idUsuario]);
     done(null, rows[0][0]);
 });
