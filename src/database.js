@@ -1,21 +1,9 @@
-const mongoose = require('mongoose');
 const mysql = require('mysql');
 const { promisify } = require('util');
 
 const { database } = require('./keys');
 
 const pool = mysql.createPool(database);
-
-/* mongoose.connect('mongodb+srv://admin:1234@softwareeducativojson-tzliv.mongodb.net/test?retryWrites=true&w=majority', {
-    user: "admin",
-    pass: "1234",
-    useCreateIndex: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false
-})
-    .then(db => console.log('DB Json is connected'))
-    .catch(err => console.error(err)); */
 
 pool.getConnection((err, connection) => {
     if (err) {
