@@ -1,23 +1,23 @@
 module.exports = {
     isLoggedInUser(req, res, next) {
-        if ((req.user.Rol_idRol == 1 || req.user.Rol_idRol == 2 || req.user.Rol_idRol == 3) && req.isAuthenticated()) {
+        if ((req.usuario.rol == 1 || req.usuario.rol == 2 || req.usuario.rol == 3) && req.isAuthenticated()) {
             return next();
         }
-        return res.redirect('/profile');
+        return res.redirect('/');
     },
 
     isLoggedIn(req, res, next) {
-        if ((req.user.Rol_idRol == 2 || req.user.Rol_idRol == 3) && req.isAuthenticated()) {
+        if ((req.usuario.rol == 2 || req.usuario.rol == 3) && req.isAuthenticated()) {
             return next();
         }
-        return res.redirect('/profile');
+        return res.redirect('/');
     },
 
     isLoggedInAdmin(req, res, next) {
-        if (req.user.Rol_idRol == 2 && req.isAuthenticated()) {
+        if (req.usuario.rol == 2 && req.isAuthenticated()) {
             return next();
         }
-        return res.redirect('/profile');
+        return res.redirect('/');
     },
 
     isNotLoggedIn(req, res, next) {
