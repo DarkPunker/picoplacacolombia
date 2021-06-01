@@ -4,51 +4,15 @@ const pool = require('../database');
 const { isLoggedInAdmin } = require('../lib/auth');
 const Carousel = require('../models/carousel');
 
-router.get('/gestionarUsuario', isLoggedInAdmin, async (req, res) => {
-    const users = await pool.query('SELECT * FROM seeAllUsers');
-    res.render('admin/gestionarUsuario', { users });
-});
-
-router.get('/editUser/:nombre', isLoggedInAdmin, async (req, res) => {
-    const { nombre } = req.params;
-    const user = await pool.query('CALL seeUserRol (?)', [nombre]);
-    const rol = await pool.query('SELECT * FROM Rol');
-    res.render('admin/editUser', { user: user[0][0], rol });
-});
-
 router.post('/editUser/:nombre', isLoggedInAdmin, async (req, res) => {
     const { nombre } = req.params;
-    const { rol, estado } = req.body;
-    await pool.query('CALL editUserAdmin (?,?,?)', [nombre, rol, estado]);
-    req.flash('success', 'Usuario Modificado Correctamente');
-    res.redirect('/admin/gestionarUsuario')
+    const { estado } = req.body;
+    try {
+        await pool.query('UPDATE usuario SET estadoUsuario = ? WHERE nombreUsuario = ?', [estado, nombre]);
+        req.flash('success', 'Usuario Modificado Correctamente');
+    } catch (error) {
+        res.sendStatus(500);
+    }
 });
-
-router.get('/gestionarCarousel', isLoggedInAdmin, async (req, res) => {
-    const carousel = await Carousel.find();
-    res.render('admin/gestionarCarousel', { carousel });
-
-});
-
-router.get('/editCarousel/:id', isLoggedInAdmin, async (req, res) => {
-    const { id } = req.params;
-    const carousel = await Carousel.find({ _id: id });
-    res.render('admin/editCarousel', { carousel: carousel[0] })
-})
-
-router.get('/addCarousel', isLoggedInAdmin, (req, res)=>{
-    res.render('admin/addCarousel')
-});
-
-router.post('/editCarousel', async (req, res)=>{
-
-})
-
-router.post('/addCarousel', isLoggedInAdmin, async(req, res)=>{
-    const {direccion, nombre, descripcion} = req.body;
-    const newCarousel = new Carousel({direccion, nombre, descripcion});
-    await Carousel.save(newCarousel);
-    res.redirect('/admin/gestionarCarousel')
-})
 
 module.exports = router;
