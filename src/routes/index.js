@@ -18,7 +18,8 @@ function getDateTime() {
 router.get('/:placa', /* isLoggedIn, */ async (req, res) => {
     const { placa } = req.params;
     try {
-        const consulta = await pool.query('SELECT placa, fecha, nombreEstacion FROM registro INNER JOIN usuario ON registro.fkUsuario = usuario.idUsuario WHERE placa = ? AND fecha >= ?', [placa, getDateTime() ]);
+        var fecha = getDateTime();
+        const consulta = await pool.query("SELECT placa, DATE_FORMAT(fecha,'%Y-%m-%d %h:%i:%s %p') AS fecha, nombreEstacion FROM registro INNER JOIN usuario ON registro.fkUsuario = usuario.idUsuario WHERE placa = ? AND fecha >= ?", [placa, fecha]);
         if (consulta[0] != null) {
             res.json({
                 placa: consulta[0].placa,
