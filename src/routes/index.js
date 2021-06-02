@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../database');
 const { isLoggedIn } = require('../lib/auth');
+const moment = require('moment-timezone');
 
 function getDateTime() {
 
-    var date = new Date();
+    var date = moment.tz(Date.now(), "America/Bogota");
     
     date.setHours(0);
     date.setSeconds(0);
