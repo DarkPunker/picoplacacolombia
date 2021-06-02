@@ -23,7 +23,8 @@ router.post('/signin', /* isNotLoggedIn, */ async (req, res, next) => {
                 if (rows[0].estado != 0) {
                     res.json({
                         nombreUsuario: rows[0].nombreUsuario,
-                        nombreEstacion: rows[0].nombreEstacion
+                        nombreEstacion: rows[0].nombreEstacion,
+                        rol: rows[0].rol
                     });
                 } else {
                     res.sendStatus(404);
