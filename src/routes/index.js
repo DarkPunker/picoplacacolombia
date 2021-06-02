@@ -6,24 +6,15 @@ const moment = require('moment-timezone');
 
 function getDateTime() {
 
-    var date = moment.tz(Date.now(), "America/Bogota");
+    var fecha = moment.tz(Date.now(), "America/Bogota").format('YYYY-MM-DD');
     
-    date.setHours(0);
-    date.setSeconds(0);
-    date.setMinutes(0);
-    date.setMilliseconds(0);
-    
-    return date;
+    return fecha;
 }
 
 router.get('/:placa', /* isLoggedIn, */ async (req, res) => {
     const { placa } = req.params;
     try {
-        var fecha = getDateTime();
-        res.json({
-            fecha: fecha
-            });
-        /* const consulta = await pool.query("SELECT placa, DATE_FORMAT(fecha,'%Y-%m-%d %h:%i:%s %p') AS fecha, nombreEstacion FROM registro INNER JOIN usuario ON registro.fkUsuario = usuario.idUsuario WHERE placa = ? AND fecha >= ?", [placa, fecha]);
+        const consulta = await pool.query("SELECT placa, DATE_FORMAT(fecha,'%Y-%m-%d %h:%i:%s %p') AS fecha, nombreEstacion FROM registro INNER JOIN usuario ON registro.fkUsuario = usuario.idUsuario WHERE placa = ? AND fecha >= ?", [placa, getDateTime()]);
         if (consulta[0] != null) {
             res.json({
                 placa: consulta[0].placa,
@@ -32,7 +23,7 @@ router.get('/:placa', /* isLoggedIn, */ async (req, res) => {
             });
         } else {
             res.sendStatus(404);
-        } */
+        }
     } catch (error) {
         res.sendStatus(500);
     }
