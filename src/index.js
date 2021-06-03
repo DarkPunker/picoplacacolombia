@@ -22,8 +22,8 @@ app.set('port', process.env.PORT || 4000);
 app.use(session({
     secret: 'texto',
     resave: false,
-    saveUninitialized: false,
-    store: new mysqlstore(database)
+    saveUninitialized: false
+    /* store: new mysqlstore(database) */
 }));
 app.use(flash());
 app.use(morgan('dev'));

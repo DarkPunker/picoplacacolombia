@@ -1,28 +1,16 @@
-const mysql = require('mysql');
-const { promisify } = require('util');
+const { /* Pool, */ Client } = require('pg')
 
-const { database } = require('./keys');
+let client = new Client({
+    user: 'erggnakfnkygpe',
+    password: '774483fe937288c2399bec4c6ca0f552b38651e54ae758b7bb71b33439d396fc',
+    database: 'df0pn6ilfsd9cm',
+    port: 5432,
+    host: 'ec2-34-233-0-64.compute-1.amazonaws.com',
+    ssl: {
+      rejectUnauthorized: false
+    },
+})
+client.connect()
 
-const pool = mysql.createPool(database);
 
-pool.getConnection((err, connection) => {
-    if (err) {
-        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-            console.error('DATABASE CONNECTION WAS CLOSED');
-        }
-        if (err.code === 'ER_CON_COUNT_ERROR') {
-            console.error('DATABASE HAS TO MANY CONNECTIONS');
-        }
-        if (err.code === 'ECONNREFUSED') {
-            console.error('DATABASE CONNECTION WAS REFUSED');
-        }
-    }
-    if (connection) connection.release();
-    console.log('DB SQL is Connected');
-    return;
-});
-
-//Promisify Pool Query
-pool.query = promisify(pool.query);
-
-module.exports = pool;
+module.exports = client;

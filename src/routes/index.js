@@ -1,30 +1,30 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../database');
-const { isLoggedIn } = require('../lib/auth');
+const client = require('../database');
 const moment = require('moment-timezone');
 
 function getDateTime() {
 
     var fecha = moment.tz(Date.now(), "America/Bogota").format('YYYY-MM-DD');
-    
+
     return fecha;
 }
 
 router.get('/:placa', /* isLoggedIn, */ async (req, res) => {
     const { placa } = req.params;
+    console.log("PLACA", placa, getDateTime())
     try {
-        const consulta = await pool.query("SELECT placa, DATE_FORMAT(fecha,'%Y-%m-%d %h:%i:%s %p') AS fecha, nombreEstacion FROM registro INNER JOIN usuario ON registro.fkUsuario = usuario.idUsuario WHERE placa = ? AND fecha >= ?", [placa, getDateTime()]);
-        if (consulta[0] != null) {
-            res.json({
-                placa: consulta[0].placa,
-                nombreEstacion: consulta[0].nombreEstacion,
-                fecha: consulta[0].fecha
-            });
-        } else {
-            res.sendStatus(404);
-        }
+
+        const text = `SELECT placa, to_char(fecha,'YYYY-MM-DD HH:MI:SS') AS fecha, nombreestacion 
+        FROM registro 
+        INNER JOIN usuario ON registro.fkusuario = usuario.idusuario 
+        WHERE placa = $1 AND fecha >= $2`
+
+        const { rows } = await client.query(text, [placa, getDateTime()]);
+        console.log("consulta", rows);
+        res.json(rows);
     } catch (error) {
+        console.error(error);
         res.sendStatus(500);
     }
 });
@@ -32,11 +32,17 @@ router.get('/:placa', /* isLoggedIn, */ async (req, res) => {
 router.post('/', /* isLoggedIn, */ async (req, res) => {
     const { placa, nombreUsuario } = req.body;
     try {
-        const id = await pool.query('SELECT idUsuario FROM usuario WHERE nombreUsuario = ?', nombreUsuario);
-        const consul = await pool.query('INSERT INTO registro (placa, fkUsuario) VALUES (?,?)', [placa, id[0].idUsuario]);
-        await pool.query('UPDATE registro SET fecha = DATE_SUB(fecha, INTERVAL 5 HOUR) WHERE idregistro = ?', consul.insertId);
+        const { rows } = await client.query('SELECT idusuario FROM usuario WHERE nombreusuario = $1', [nombreUsuario]);
+        console.log("id----", rows[0].idusuario)
+        const consul = await client.query('INSERT INTO registro (placa, fkusuario) VALUES ($1,$2) RETURNING *', [placa, rows[0].idusuario]);
+        console.log("consul----", consul.rows[0].idregistro)
+        await client.query(`UPDATE registro 
+        SET fecha = CURRENT_TIMESTAMP - interval '5 hours',
+        fechasiguiente = CURRENT_TIMESTAMP + interval '2 days'
+        WHERE idregistro = $1`, [consul.rows[0].idregistro]);
         res.sendStatus(200);
     } catch (error) {
+        console.error("error----", error)
         res.sendStatus(500);
     }
 

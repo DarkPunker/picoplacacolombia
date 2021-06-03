@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const pool = require('../database');
+const client = require('../database');
 const helpers = require('../lib/helpers');
 
 const { isLoggedIn, isNotLoggedIn } = require('../lib/auth');
@@ -14,16 +14,16 @@ router.post('/signup', /* isNotLoggedIn, */ passport.authenticate('local.signup'
 
 router.post('/signin', /* isNotLoggedIn, */ async (req, res, next) => {
     const { nombreUsuario, contrasena } = req.body;
-    console.log(nombreUsuario," ", contrasena);
+    console.log(nombreUsuario, " ", contrasena);
     try {
-        const rows = await pool.query('SELECT * FROM usuario WHERE nombreUsuario = ?', nombreUsuario);
+        const { rows } = await client.query('SELECT * FROM usuario WHERE nombreusuario = $1', [nombreUsuario]);
         if (rows[0] != null) {
             const valiPassword = await helpers.matchPassword(contrasena, rows[0].contrasena);
             if (valiPassword) {
                 if (rows[0].estado != 0) {
                     res.json({
-                        nombreUsuario: rows[0].nombreUsuario,
-                        nombreEstacion: rows[0].nombreEstacion,
+                        nombreUsuario: rows[0].nombreusuario,
+                        nombreEstacion: rows[0].nombreestacion,
                         rol: rows[0].rol
                     });
                 } else {
