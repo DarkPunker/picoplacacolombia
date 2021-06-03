@@ -21,9 +21,11 @@ router.get('/:placa', /* isLoggedIn, */ async (req, res) => {
         WHERE placa = $1 AND fecha >= $2`
 
         const { rows } = await client.query(text, [placa, getDateTime()]);
-        console.log("consulta", rows);
-        //res.json(rows);
-        res.status(200).send(rows);
+        if (rows.length != 0) {
+            console.log("consulta", rows);
+            res.json(rows);
+        }
+        res.sendStatus(404);
     } catch (error) {
         console.error(error);
         res.sendStatus(500);
