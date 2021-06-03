@@ -22,7 +22,8 @@ router.get('/:placa', /* isLoggedIn, */ async (req, res) => {
 
         const { rows } = await client.query(text, [placa, getDateTime()]);
         console.log("consulta", rows);
-        res.json(rows);
+        //res.json(rows);
+        res.status(200).send(rows);
     } catch (error) {
         console.error(error);
         res.sendStatus(500);
