@@ -15,10 +15,10 @@ router.get('/:placa', /* isLoggedIn, */ async (req, res) => {
     console.log("PLACA", placa, getDateTime())
     try {
 
-        const text = `SELECT placa, to_char(fecha,'YYYY-MM-DD HH:MI:SS') AS fecha, nombreestacion 
+        const text = `SELECT placa, to_char(fecha,'YYYY-MM-DD HH:MI:SS') AS fecha, nombreestacion as "nombreEstacion"
         FROM registro 
         INNER JOIN usuario ON registro.fkusuario = usuario.idusuario 
-        WHERE placa = $1 AND fecha >= $2`
+        WHERE placa = UPPER($1) AND fecha >= $2`
 
         const { rows } = await client.query(text, [placa, getDateTime()]);
         if (rows.length != 0) {
@@ -37,7 +37,9 @@ router.post('/', /* isLoggedIn, */ async (req, res) => {
     try {
         const { rows } = await client.query('SELECT idusuario FROM usuario WHERE nombreusuario = $1', [nombreUsuario]);
         console.log("id----", rows[0].idusuario)
-        const consul = await client.query('INSERT INTO registro (placa, fkusuario) VALUES ($1,$2) RETURNING *', [placa, rows[0].idusuario]);
+        const placanew = placa.toUpperCase();
+        console.log(placanew);
+        const consul = await client.query('INSERT INTO registro (placa, fkusuario) VALUES ($1,$2) RETURNING *', [placanew, rows[0].idusuario]);
         console.log("consul----", consul.rows[0].idregistro)
         await client.query(`UPDATE registro 
         SET fecha = CURRENT_TIMESTAMP - interval '5 hours',
